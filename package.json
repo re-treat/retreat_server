@@ -1,0 +1,17 @@
+{
+  "name": "re-treat",
+  "version": "1.0.0",
+  "description": "Re-treat project server codebase",
+  "main": "index.js",
+  "scripts": {
+    "start": "node src/js/index.js",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "Chen Meng, Vinita Sinha, Mohammed Badra",
+  "license": "ISC",
+  "dependencies": {
+    "cors": "^2.8.5",
+    "express": "^4.17.1",
+    "firebase": "^7.17.1"
+  },
+}
