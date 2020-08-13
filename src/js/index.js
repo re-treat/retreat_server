@@ -2,10 +2,18 @@ const dbUtil = require("./dbUtil.js");
 const { matchExercise } = require("./matching.js");
 
 const express = require('express');
+const cors = require("cors");
 const bodyParser = require('body-parser');
 
 const app = express();
+
+const corsConfig = {
+  origin: '*',
+}
+
+app.use(cors(corsConfig));
 app.use(bodyParser.json());
+
 
 app.get('/', (req, res) => {
   res.send('Hello World! Welcome to Re:treat')
@@ -63,7 +71,7 @@ app.post('/getLabels', async(req, res) => {
   });
  });
 
-const PORT = process.env.PORT | 8080;
+const PORT = process.env.PORT || 8080;
 app.listen(PORT, () => {
   console.log(`Server listening on port ${PORT}...`);
 });
