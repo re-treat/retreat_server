@@ -158,4 +158,23 @@ async function getLabels(question) {
 	return labels;
 }
 
-module.exports = { addExercise, queryExercise, getLabels }
+async function subscribe(email) {
+	const emailValidate = /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/;
+	if(emailValidate.test(email)){
+		let emailRef = db.collection("email").doc(email);
+		let status = emailRef.get().then(function (doc) {
+			if(doc.exists) { 
+				return Promise.resolve("Already subscribed."); }
+			else{
+				emailRef.set({subscribed: true});
+				return Promise.resolve("Subscribed.");
+			}
+		});
+		return status;
+	}
+	else{ 
+		return Promise.reject("Invalid email."); }
+	
+}
+
+module.exports = { addExercise, queryExercise, getLabels, subscribe}

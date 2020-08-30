@@ -8,7 +8,7 @@ const bodyParser = require('body-parser');
 const app = express();
 
 const corsConfig = {
-  origin: '*',
+  origin: 'https://re-treat.github.io',
 }
 
 app.use(cors(corsConfig));
@@ -71,7 +71,23 @@ app.post('/getLabels', async(req, res) => {
   });
  });
 
-const PORT = process.env.PORT || 8080;
+app.post('/subscribe', async(req, res) => {
+  const email = req.body.email;
+  const promise = dbUtil.subscribe(email);
+  promise.then(function(result) {
+    console.log(result);
+    res.status(200);
+    res.send();
+  }).catch(function(err){
+    console.log(err);
+    res.statusMessage = err;
+    res.status(500);
+    res.send();
+    
+  });
+});
+
+const PORT = process.env.PORT || 8081;
 app.listen(PORT, () => {
   console.log(`Server listening on port ${PORT}...`);
 });
