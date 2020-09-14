@@ -6,92 +6,6 @@ firebase.initializeApp(fbConfig);
 var db = firebase.firestore();
 
 /*
- * Adds the exercise to the db
- * @param{string} name: name of the exercise, should be in the format of name_of_the_exercise
- * @param{string} file: filename of the exercise page, e.g: "index.html"
- * @param{string[]} labels_q1: array of labels as strings for question 1
- * @param{string[]} labels_q2: array of labels as strings for question 2
- * @param{string[]} labels_q3: array of labels as strings for question 3
- * @returns{Promise}: Returns resolved promise if success, otherwise return rejected promise
- */
-async function addExercise(name, file, labels_q1, labels_q2, labels_q3) {
-	if (!Array.isArray(labels_q1) || !Array.isArray(labels_q2) || !Array.isArray(labels_q3)) {
-		console.error("Invalid label input");
-		return Promise.reject(false);
-	}
-
-	// Add exersice to the db
-	let exerciseRef = db.collection("exercises").doc(name);
-	let status = exerciseRef.get().then(function (doc) {
-		if (doc.exists) { throw "Exercise already exists"; }
-		else {
-			exerciseRef.set({ url: file });
-			// Add exercise to q1 labels
-			const q1Ref = db.collection("labels_q1");
-			labels_q1.forEach(function (label) {
-				let labelRef = q1Ref.doc(label);
-				labelRef.get().then(function (doc) {
-					let field = new Object();
-					field[name] = true;
-
-					if (doc.exists) {
-						labelRef.set(field, { merge: true });
-					}
-					else {
-						labelRef.set(field);
-					}
-				}).catch(function (error) {
-					throw error;
-				});
-			});
-
-			// Add exercise to q2 labels
-			const q2Ref = db.collection("labels_q2");
-			labels_q2.forEach(function (label) {
-				let labelRef = q2Ref.doc(label);
-				labelRef.get().then(function (doc) {
-					let field = new Object();
-					field[name] = true;
-
-					if (doc.exists) {
-						labelRef.set(field, { merge: true });
-					}
-					else {
-						labelRef.set(field);
-					}
-				}).catch(function (error) {
-					throw error;
-				});
-			});
-
-			// Add exercise to q3 labels
-			const q3Ref = db.collection("labels_q3");
-			labels_q3.forEach(function (label) {
-				let labelRef = q3Ref.doc(label);
-				labelRef.get().then(function (doc) {
-					let field = new Object();
-					field[name] = true;
-
-					if (doc.exists) {
-						labelRef.set(field, { merge: true });
-					}
-					else {
-						labelRef.set(field);
-					}
-				}).catch(function (error) {
-					throw error;
-				});
-			});
-			return Promise.resolve(true);
-		}
-	}).catch(function (err) {
-		console.error(err);
-		return Promise.reject(false);
-	});
-	return status;
-}
-
-/*
  * Finds the exercises associated with the given label and question
  * @param{string} label: label to search
  * @param{string} question: the question the label belongs to: q1, q2, or q3
@@ -158,6 +72,11 @@ async function getLabels(question) {
 	return labels;
 }
 
+/*
+ * Adds the email to the subscription list
+ * @param{string} email: new email
+ * @returns{Promise}: returns the status of the subscription
+ */
 async function subscribe(email) {
 	const emailValidate = /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/;
 	if(emailValidate.test(email)){
@@ -177,4 +96,30 @@ async function subscribe(email) {
 	
 }
 
-module.exports = { addExercise, queryExercise, getLabels, subscribe}
+/*
+ * Get the exercise for the given id
+ * @param{string} id: Id of the exercise
+ * @returns{Object}: JSON object representing the exercise
+ */
+async function getExercise(id) {
+	let ex = new Object();
+	let exerciseRef = db.collection("exercises").doc(id);
+	let result = await exerciseRef.get().then(async function(doc) {
+		if(!doc.exists) { return Promise.reject("Exercise not found."); }
+		const data = doc.data();
+		ex.name = data.name;
+		ex.reference = data.reference;
+		ex.instructions = [];
+		await exerciseRef.collection("instructions").get().then(function (querySnapshot) {
+			querySnapshot.forEach(function(inst) {
+				ex.instructions.push(inst.data());
+			});
+		});
+		return Promise.resolve(ex);
+	}).catch(function(err) {
+		return Promise.reject(err);
+	});
+	return result;
+}
+
+module.exports = {queryExercise, getLabels, subscribe, getExercise}

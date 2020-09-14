@@ -71,6 +71,22 @@ app.post('/getLabels', async(req, res) => {
   });
  });
 
+app.post('/getExercise', async(req, res) => {
+  const id = req.body.id;
+  console.log(id);
+  const promise = dbUtil.getExercise(id);
+  promise.then(function(value) {
+    console.log(value);
+    console.log("success");
+    res.status(200);
+    res.send(value);
+  }).catch(function(err){
+    console.log("failed");
+    res.status(500);
+    res.send(err);
+  });
+});
+
 app.post('/subscribe', async(req, res) => {
   const email = req.body.email;
   const promise = dbUtil.subscribe(email);
