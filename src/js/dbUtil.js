@@ -109,6 +109,11 @@ async function getExercise(id) {
 		const data = doc.data();
 		ex.name = data.name;
 		ex.reference = data.reference;
+		ex.image = data.image;
+		ex.labels_q1 = data.labels_q1;
+		ex.labels_q2 = data.labels_q2;
+		ex.labels_q3 = data.labels_q3;
+
 		ex.instructions = [];
 		await exerciseRef.collection("instructions").get().then(function (querySnapshot) {
 			querySnapshot.forEach(function(inst) {
@@ -117,6 +122,7 @@ async function getExercise(id) {
 		});
 		return Promise.resolve(ex);
 	}).catch(function(err) {
+		console.log(err);
 		return Promise.reject(err);
 	});
 	return result;

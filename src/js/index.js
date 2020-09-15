@@ -8,6 +8,7 @@ const bodyParser = require('body-parser');
 const app = express();
 
 const corsConfig = {
+  //origin: '*',
   origin: 'https://re-treat.github.io',
 }
 
