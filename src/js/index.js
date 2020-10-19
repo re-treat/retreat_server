@@ -9,7 +9,7 @@ const app = express();
 
 const corsConfig = {
   //origin: '*',
-  origin: 'https://re-treat.github.io',
+  origin: 'https://www.re-treat.app',
 }
 
 app.use(cors(corsConfig));
