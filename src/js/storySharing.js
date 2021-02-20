@@ -1,35 +1,35 @@
-const {db,getNextAutoKey} = require ('./dbUtil.js');
+const {db, getNextAutoKey} = require('./dbUtil.js');
 
-createStory = (body,author,emotion,timestamp) =>{
+createStory = (body, author, emotion, timestamp) => {
     return db.runTransaction(async transaction => {
         const pk = await getNextAutoKey('story');
-        transaction.set(db.collection('story').doc(String(pk)),{
-            id:pk,
-            timestamp:timestamp,
-            body:body,
-            author:author,
-            emotion:emotion
-        })
-        return {success:true}
-    }).catch((err)=>{
+        transaction.set(db.collection('story').doc(String(pk)), {
+            id: pk,
+            timestamp: timestamp,
+            body: body,
+            author: author,
+            emotion: emotion
+        });
+        return {success: true}
+    }).catch((err) => {
         console.log(err);
         return Promise.resolve({success: false})
     })
-}
+};
 
-getStoryById = (storyId)=>{
+getStoryById = (storyId) => {
     const storyRef = db.collection('story').doc(String(storyId));
-    return storyRef.get().then(doc=>{
-        return doc.exists?doc.data():Promise.reject("Invalid Story Id")
+    return storyRef.get().then(doc => {
+        return doc.exists ? doc.data() : Promise.reject("Invalid Story Id")
     }).catch((err) => {
         console.log(err);
-        return Promise.resolve({success: false,msg:err})
+        return Promise.resolve({success: false, msg: err})
     })
-}
+};
 
 deleteStoryById = (storyId) => {
-    const storyRef = db.collection('story').doc(String(pk));
-    return storyRef.get(doc => {
+    const storyRef = db.collection('story').doc(String(storyId));
+    return storyRef.get().then(doc => {
         if (doc.exists) {
             doc.ref.delete();
             return true
@@ -42,22 +42,25 @@ deleteStoryById = (storyId) => {
     })
 };
 
-queryStory = (emotion) =>{
+queryStory = (emotion) => {
     const storyRef = db.collection('story')
-    return storyRef.where('emotion','==',emotion).get().then(
-        querySnapshot=> {
+    return storyRef.where('emotion', '==', emotion).get().then(
+        querySnapshot => {
             let count = querySnapshot.docs.length;
             return {
-                start:0,
+                start: 0,
                 end: count,
                 count: count,
                 lst: querySnapshot.docs.map(ele => ele.data())
             }
         }
     ).then(
-        data=>({success:true,data:data})
+        data => ({success: true, data: data})
     ).catch((err) => {
         console.log(err);
         return Promise.resolve({success: false, msg: err})
     })
-}
+};
+
+
+module.exports = {createStory, getStoryById, deleteStoryById, queryStory};
