@@ -1,2 +1,2 @@
-import "./dbUtil";
-import './storySharing';
+require ("./dbUtil");
+require ('./storySharing');

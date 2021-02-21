@@ -81,22 +81,22 @@ createStoryView = async (req, res) => {
     res.send("Bad Request")
 }
 getStoryByIdView = async (req, res) => {
-    const stoyId = req.params.stoyId;
-    const result = await getStoryById(stoyId);
+    const {storyId} = req.params;
+    const result = await getStoryById(storyId);
     res.status(result.success?200:400)
     res.send(result)
 }
 deleteStoryByIdView = async (req, res) => {
-    const {stoyId} = req.params;
-    const result = await deleteStoryById(stoyId);
+    const {storyId} = req.params;
+    const result = await deleteStoryById(storyId);
     res.status(result ? 200 : 400)
-    res.send(result)
+    res.send({success:result})
 }
 queryStroyView = async (req, res) => {
     const {emotion} = req.query;
     const result = await queryStory(emotion);
     res.status(result.success ? 200 : 400)
-    res.send(result)
+    res.send({result})
 }
 module.exports = {createStory, getStoryById, deleteStoryById, queryStory,
     createStoryView, getStoryByIdView, deleteStoryByIdView, queryStroyView};

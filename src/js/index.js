@@ -106,8 +106,8 @@ app.post('/subscribe', async(req, res) => {
 
 app.post('/story/create/', storySharing.createStoryView);
 app.get('/story/query/', storySharing.queryStroyView);
-app.get('/story/:storyId',storySharing.getStoryByIdView);
-app.delete('/story/:storyId', storySharing.getStoryByIdView);
+app.get('/story/:storyId/',storySharing.getStoryByIdView);
+app.delete('/story/:storyId/', storySharing.deleteStoryByIdView);
 
 
 const PORT = process.env.PORT || 8081;
