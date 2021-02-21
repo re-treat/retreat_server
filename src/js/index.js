@@ -1,6 +1,6 @@
 const dbUtil = require("./dbUtil.js");
 const { matchExercise } = require("./matching.js");
-
+const storySharing = require('./storySharing');
 const express = require('express');
 const cors = require("cors");
 const bodyParser = require('body-parser');
@@ -100,9 +100,15 @@ app.post('/subscribe', async(req, res) => {
     res.statusMessage = err;
     res.status(500);
     res.send();
-    
+
   });
 });
+
+app.post('/story/create/', storySharing.createStoryView);
+app.get('/story/query/', storySharing.queryStroyView);
+app.get('/story/:storyId',storySharing.getStoryByIdView);
+app.delete('/story/:storyId', storySharing.getStoryByIdView);
+
 
 const PORT = process.env.PORT || 8081;
 app.listen(PORT, () => {

@@ -4,7 +4,9 @@ var firebase = require("firebase/app");
 require("firebase/firestore");
 firebase.initializeApp(fbConfig);
 var db = firebase.firestore();
-
+if (process.env.RETREAT_DEBUG) {
+	db.useEmulator("localhost", 8080);
+}
 /*
  * Finds the exercises associated with the given label and question
  * @param{string} label: label to search
