@@ -4,7 +4,9 @@ var firebase = require("firebase/app");
 require("firebase/firestore");
 firebase.initializeApp(fbConfig);
 var db = firebase.firestore();
-
+if (process.env.RETREAT_DEBUG) {
+	db.useEmulator("localhost", 8080);
+}
 /*
  * Finds the exercises associated with the given label and question
  * @param{string} label: label to search
@@ -82,7 +84,7 @@ async function subscribe(email) {
 	if(emailValidate.test(email)){
 		let emailRef = db.collection("email").doc(email);
 		let status = emailRef.get().then(function (doc) {
-			if(doc.exists) { 
+			if(doc.exists) {
 				return Promise.resolve("Already subscribed."); }
 			else{
 				emailRef.set({subscribed: true});
@@ -91,9 +93,9 @@ async function subscribe(email) {
 		});
 		return status;
 	}
-	else{ 
+	else{
 		return Promise.reject("Invalid email."); }
-	
+
 }
 
 /*
@@ -128,4 +130,20 @@ async function getExercise(id) {
 	return result;
 }
 
-module.exports = {queryExercise, getLabels, subscribe, getExercise}
+/*
+ * Get AutoIncrement Id
+ * @param{string} schema: schemaName, e.g. 'story'
+ * @returns{Promise}: returns the status of the subscription
+ */
+const getNextAutoKey= async (schema) =>{
+	const keyRef = db.collection("autoIncrement").doc(schema);
+	return db.runTransaction( transaction => transaction.get(keyRef).then(
+     	 async doc=>{
+     		const newIncId = (doc.data().value || 0) + 1;
+     		transaction.update(doc.ref, {value: newIncId});
+     		return newIncId
+		}
+	 )).catch((err)=>Promise.reject(err));
+}
+
+module.exports = {queryExercise, getLabels, subscribe, getExercise,getNextAutoKey, db}
