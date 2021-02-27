@@ -46,4 +46,18 @@ deleteReportById = (reportId) => {
     })
 };
 
-module.exports = {createReport, getReportbyId, deleteReportById}
+getReportByIdView = async (req, res) => {
+    const {reportId} = req.params;
+    const result = await getStoryById(reportId);
+    res.status(result.success ? 200 : 400)
+    res.send(result)
+}
+
+deleteReportByIdView = async (req, res) => {
+    const {reportId} = req.params;
+    const result = await deleteStoryById(reportId);
+    res.status(result.success ? 200 : 400)
+    res.send({success:result})
+}
+
+module.exports = {createReport, getReportbyId, deleteReportById, getReportByIdView, deleteReportByIdView}
