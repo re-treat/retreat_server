@@ -112,3 +112,8 @@ testStory = async () => {
     console.log("---------")
 
 }
+test = async ()=>{
+    await testName()
+    await testReport()
+    await testStory()
+}
