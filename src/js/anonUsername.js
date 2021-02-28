@@ -1,6 +1,6 @@
 const { db } = require("./dbUtil.js");
 
-async function addUsername(name){
+addUsername = async (name) => {
 	var docRef = db.collection("anonUsername").doc(name);
 	var doc = await docRef.get();
 	if(!doc.exists){
@@ -10,7 +10,7 @@ async function addUsername(name){
 	else{ return Promise.reject(false); }
 }
 
-async function getRandomAvailableNames(count){
+getRandomAvailableNames = async(count) => {
 	availableNames = [];
 	await db.collection("anonUsername").where('registered', '==', false).get()
 	.then(function (querySnapshot) {
@@ -28,7 +28,7 @@ async function getRandomAvailableNames(count){
 	return Promise.resolve(selectedNames);
 }
 
-async function registerName(name){
+registerName = async (name)=>{
 	var docRef = db.collection("anonUsername").doc(name);
 	var doc = await docRef.get();
 	if(!doc.exists){
@@ -39,11 +39,11 @@ async function registerName(name){
 	}
 	else{
 		docRef.set({'registered': true});
-		return Promise.resolve(true); 
+		return Promise.resolve(true);
 	}
 }
 
-async function unregisterName(name){
+unregisterName = async (name)=>{
 	var docRef = db.collection("anonUsername").doc(name);
 	var doc = await docRef.get();
 	if(!doc.exists){
@@ -54,11 +54,11 @@ async function unregisterName(name){
 	}
 	else{
 		docRef.set({'registered': false});
-		return Promise.resolve(true); 
+		return Promise.resolve(true);
 	}
 }
 
-async function deleteName(name){
+deleteName = async (name) =>{
 	var docRef = db.collection("anonUsername").doc(name);
 	var doc = await docRef.get();
 	if(doc.exists){
@@ -68,3 +68,4 @@ async function deleteName(name){
 	else{ return Promise.reject(false); }
 }
 
+module.exports = {addUsername,getRandomAvailableNames,registerName,unregisterName,deleteName}

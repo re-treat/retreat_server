@@ -135,12 +135,12 @@ async function getExercise(id) {
  * @param{string} schema: schemaName, e.g. 'story'
  * @returns{Promise}: returns the status of the subscription
  */
-const getNextAutoKey= async (schema) =>{
+getNextAutoKey= async (schema) =>{
 	const keyRef = db.collection("autoIncrement").doc(schema);
 	return db.runTransaction( transaction => transaction.get(keyRef).then(
      	 async doc=>{
-     		const newIncId = (doc.data().value || 0) + 1;
-     		transaction.update(doc.ref, {value: newIncId});
+     		const newIncId = doc.exists? (doc.data().value || 0) + 1 : 0;
+     		transaction.set(doc.ref, {value: newIncId});
      		return newIncId
 		}
 	 )).catch((err)=>Promise.reject(err));

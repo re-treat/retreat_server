@@ -10,7 +10,7 @@ createStory = (body,author,emotion,timestamp) =>{
             author:author,
             emotion:emotion
         });
-        return {success:true}
+        return {success:true,id:pk}
     }).catch((err)=>{
         console.log(err);
         return Promise.resolve({success: false})
