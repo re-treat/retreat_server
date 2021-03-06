@@ -67,4 +67,4 @@ async function deleteName(name){
 	}
 	else{ return Promise.reject(false); }
 }
-
+module.exports = {getRandomAvailableNames, registerName, unregisterName};
