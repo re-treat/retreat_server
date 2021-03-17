@@ -9,7 +9,7 @@ createReport = (body, author, timestamp) => {
              body: body,
              author: author
          });
-         return {success:true}
+         return {success:true,id: incrementedId}
     }).catch((error) => {
         console.log(error);
         return Promise.resolve({success: false})
@@ -20,8 +20,7 @@ getReportbyId = (reportId) => {
     const reportRef = db.collection('report').doc(String(reportId));
     return reportRef.get().then(doc=>{
         if (doc.exists) {
-            doc.data()
-            return true
+            return doc.data()
         } else {
             return Promise.reject("Invalid Report Id")
         }

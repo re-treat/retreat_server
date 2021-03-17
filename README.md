@@ -20,3 +20,12 @@ to start a local db on port 8080 and run
 
 to start the project
 
+## Test script
+
+Google firebase:
+
+```npm run test``` 
+
+Local emulator:
+
+```npm run test-dev```
