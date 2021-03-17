@@ -10,7 +10,7 @@ createStory = (body,author,emotion,timestamp) =>{
             author:author,
             emotion:emotion
         });
-        return {success:true}
+        return {success:true,id:pk}
     }).catch((err)=>{
         console.log(err);
         return Promise.resolve({success: false})
@@ -26,6 +26,21 @@ getStoryById = (storyId)=>{
         return Promise.resolve({success: false,msg:err})
     })
 };
+
+responseStory = (storyId,resp) => {
+    const storyRef = db.collection('story').doc(String(storyId));
+    return storyRef.get().then(doc => {
+        if(doc.exists) {
+            const new_val = (doc.data()[resp] || 0) + 1
+            storyRef.set({[resp]:new_val})
+            return getStoryById(storyId)
+        }
+        return Promise.reject("Invalid Id")
+    }).catch((err) => {
+        console.log(err);
+        return Promise.resolve({success: false, msg: err})
+    })
+}
 
 deleteStoryById = (storyId) => {
     const storyRef = db.collection('story').doc(String(storyId));
@@ -45,7 +60,7 @@ deleteStoryById = (storyId) => {
 queryStory = (emotion) =>{
     let storyRef = db.collection('story')
     if (emotion){
-        storyRef = storyRef.where('emotion', '==', emotion)
+        storyRef = storyRef.where('emotion', 'array-contains', emotion)
     }
     return storyRef.get().then(
         querySnapshot=> {
@@ -86,6 +101,12 @@ getStoryByIdView = async (req, res) => {
     res.status(result.success?200:400)
     res.send(result)
 }
+responseStoryView = async (req, res) => {
+    const {storyId,resp} = req.body;
+    const result = await responseStory(storyId);
+    res.status(result.success ? 200 : 400)
+    res.send(result)
+}
 deleteStoryByIdView = async (req, res) => {
     const {storyId} = req.params;
     const result = await deleteStoryById(storyId);
@@ -98,5 +119,5 @@ queryStroyView = async (req, res) => {
     res.status(result.success ? 200 : 400)
     res.send({result})
 }
-module.exports = {createStory, getStoryById, deleteStoryById, queryStory,
-    createStoryView, getStoryByIdView, deleteStoryByIdView, queryStroyView};
+module.exports = {createStory, getStoryById, deleteStoryById, queryStory, responseStory,
+    createStoryView, getStoryByIdView, deleteStoryByIdView, queryStroyView, responseStoryView};
