@@ -1,6 +1,7 @@
 const dbUtil = require("./dbUtil.js");
 const { matchExercise } = require("./matching.js");
 const storySharing = require('./storySharing');
+const usernameUtil = require('./anonUsername.js');
 const express = require('express');
 const cors = require("cors");
 const bodyParser = require('body-parser');
@@ -104,10 +105,64 @@ app.post('/subscribe', async(req, res) => {
   });
 });
 
+app.post('/log/', async (req, res) => {
+  const {pageName,data} = req.body;
+  const resp = await dbUtil.logVisit(pageName,data);
+  res.status(200);
+  res.send();
+})
+
 app.post('/story/create/', storySharing.createStoryView);
 app.get('/story/query/', storySharing.queryStroyView);
 app.get('/story/:storyId/',storySharing.getStoryByIdView);
+app.post('/story/:storyId/response/', storySharing.responseStoryView);
 app.delete('/story/:storyId/', storySharing.deleteStoryByIdView);
+
+/* Anonymous username */
+app.post('/username/get', async(req, res) => {
+  const count = req.body.count;
+  const promise = usernameUtil.getRandomAvailableNames(count);
+  promise.then(function(result) {
+    console.log(result);
+    res.status(200);
+    res.send(result);
+  }).catch(function(err){
+    console.log(err);
+    res.statusMessage = err;
+    res.status(500);
+    res.send();
+  });
+});
+
+app.post('/username/register', async(req, res) => {
+  const username = req.body.username;
+  const promise = usernameUtil.registerName(count);
+  promise.then(function(result) {
+    console.log(result);
+    res.status(200);
+    res.send(result);
+  }).catch(function(err){
+    console.log(err);
+    res.statusMessage = err;
+    res.status(404);
+    res.send();
+  });
+});
+
+app.post('/username/unregister', async(req, res) => {
+  const username = req.body.username;
+  const promise = usernameUtil.unregisterName(count);
+  promise.then(function(result) {
+    console.log(result);
+    res.status(200);
+    res.send(result);
+  }).catch(function(err){
+    console.log(err);
+    res.statusMessage = err;
+    res.status(404);
+    res.send();
+  });
+});
 
 
 const PORT = process.env.PORT || 8081;
