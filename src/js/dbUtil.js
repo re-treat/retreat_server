@@ -146,4 +146,13 @@ getNextAutoKey= async (schema) =>{
 	 )).catch((err)=>Promise.reject(err));
 }
 
-module.exports = {queryExercise, getLabels, subscribe, getExercise,getNextAutoKey, db}
+logVisit = async (pageName,data) => {
+    const keyRef = db.collection("visitHistory").add(
+		{
+			pageName:pageName,
+			data:data,
+			time:new Date(),
+		}
+	);
+}
+module.exports = {db,queryExercise, getLabels, subscribe, getExercise,getNextAutoKey, logVisit }

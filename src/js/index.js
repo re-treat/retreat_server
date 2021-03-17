@@ -104,9 +104,17 @@ app.post('/subscribe', async(req, res) => {
   });
 });
 
+app.post('/log/', async (req, res) => {
+  const {pageName,data} = req.body;
+  const resp = await dbUtil.logVisit(pageName,data);
+  res.status(200);
+  res.send();
+})
+
 app.post('/story/create/', storySharing.createStoryView);
 app.get('/story/query/', storySharing.queryStroyView);
 app.get('/story/:storyId/',storySharing.getStoryByIdView);
+app.post('/story/:storyId/response/', storySharing.responseStoryView);
 app.delete('/story/:storyId/', storySharing.deleteStoryByIdView);
 
 
