@@ -57,10 +57,12 @@ deleteStoryById = (storyId) => {
     })
 };
 
-queryStory = (emotion) =>{
+queryStory = async (emotion) => {
+    console.log("Querying emotion: " + emotion);
     let storyRef = db.collection('story')
+    console.log(typeof emotion)
     if (emotion){
-        storyRef = storyRef.where('emotion', 'array-contains', emotion)
+        storyRef = await storyRef.where('emotion', '==', emotion)
     }
     return storyRef.get().then(
         querySnapshot=> {
@@ -74,8 +76,10 @@ queryStory = (emotion) =>{
                 )
             }
         }
-    ).then(
-        data=>({success:true,data:data})
+    ).then((data)=>{
+        console.log(data);
+        return Promise.resolve({success:true,data:data});
+    }
     ).catch((err) => {
         console.log(err);
         return Promise.resolve({success: false, msg: err})
