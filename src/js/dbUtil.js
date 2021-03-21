@@ -1,12 +1,15 @@
 const fbConfig = require("./fbConfig.js");
 
 var firebase = require("firebase/app");
+const {FireSQL} = require('firesql');
 require("firebase/firestore");
 firebase.initializeApp(fbConfig);
 var db = firebase.firestore();
 if (process.env.RETREAT_DEBUG) {
 	db.useEmulator("localhost", 8080);
 }
+const fireSQL = new FireSQL(db);
+
 /*
  * Finds the exercises associated with the given label and question
  * @param{string} label: label to search
@@ -155,4 +158,4 @@ logVisit = async (pageName,data) => {
 		}
 	);
 }
-module.exports = {db,queryExercise, getLabels, subscribe, getExercise,getNextAutoKey, logVisit }
+module.exports = {db, fireSQL,queryExercise, getLabels, subscribe, getExercise,getNextAutoKey, logVisit }

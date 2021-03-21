@@ -1,4 +1,4 @@
-const {db,getNextAutoKey} = require ('./dbUtil.js');
+const {db,getNextAutoKey, fireSQL} = require ('./dbUtil.js');
 
 createStory = (body,author,emotion,timestamp) =>{
     return db.runTransaction(async transaction => {
@@ -17,6 +17,16 @@ createStory = (body,author,emotion,timestamp) =>{
     })
 };
 
+serializeStory= (ele) => {
+    const respList = Object.keys(ele.responses || {}).sort(
+        (a, b) => ele.responses[b] - ele.responses[a]
+    )
+    return {
+    ...ele,
+    responses:respList.slice(0, 3),
+    resp_count: respList.map(e=> ele.responses[e]).filter(e=>e).reduce((a,b)=>a+b,0),
+}}
+
 getStoryById = (storyId)=>{
     const storyRef = db.collection('story').doc(String(storyId));
     return storyRef.get().then(doc=>{
@@ -31,8 +41,10 @@ responseStory = (storyId,resp) => {
     const storyRef = db.collection('story').doc(String(storyId));
     return storyRef.get().then(doc => {
         if(doc.exists) {
-            const new_val = (doc.data()[resp] || 0) + 1
-            storyRef.set({[resp]:new_val})
+            const data = doc.data();
+            const responses = data.responses || {};
+            const new_val = (responses[resp] || 0) + 1
+            storyRef.set({responses:{[resp]: new_val}}, {merge: true})
             return getStoryById(storyId)
         }
         return Promise.reject("Invalid Id")
@@ -73,6 +85,8 @@ queryStory = async (emotion) => {
                 count: count,
                 lst: querySnapshot.docs.map(ele => ele.data()).filter(
                     (ele)=> Object.keys(ele).length>0
+                ).map(
+                    serializeStory
                 )
             }
         }
@@ -106,8 +120,8 @@ getStoryByIdView = async (req, res) => {
     res.send(result)
 }
 responseStoryView = async (req, res) => {
-    const {storyId,resp} = req.body;
-    const result = await responseStory(storyId);
+    const {storyId, response} = req.body;
+    const result = await responseStory(storyId, response);
     res.status(result.success ? 200 : 400)
     res.send(result)
 }

@@ -115,7 +115,7 @@ app.post('/log/', async (req, res) => {
 app.post('/story/create/', storySharing.createStoryView);
 app.get('/story/query/', storySharing.queryStroyView);
 app.get('/story/:storyId/',storySharing.getStoryByIdView);
-app.post('/story/:storyId/response/', storySharing.responseStoryView);
+app.post('/story/response/', storySharing.responseStoryView);
 app.delete('/story/:storyId/', storySharing.deleteStoryByIdView);
 
 /* Anonymous username */
