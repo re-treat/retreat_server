@@ -5,6 +5,7 @@
   "main": "index.js",
   "scripts": {
     "start": "node src/js/index.js",
+    "start-cors": "CORS=1 node src/js/index.js",
     "start-dev": " PORT=5000 RETREAT_DEBUG=1 node src/js/index.js",
     "shell": "cd ./src/js && NODE_OPTIONS='--experimental-repl-await' NODE_PATH='./src/js' node -i -e 'require(\"./lib.js\")'",
     "shell-dev": "cd ./src/js && NODE_OPTIONS='--experimental-repl-await' NODE_PATH='./src/js' RETREAT_DEBUG=1 node -i -e 'require(\"./lib.js\")'",

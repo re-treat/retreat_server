@@ -3,15 +3,24 @@ const { matchExercise } = require("./matching.js");
 const storySharing = require('./storySharing');
 const usernameUtil = require('./anonUsername.js');
 const express = require('express');
-const cors = require("cors");
 const bodyParser = require('body-parser');
 
 const app = express();
 
-const corsConfig = {
-  //origin: '*',
-  origin: 'https://www.re-treat.app',
+var corsConfig;
+if (process.env.CORS) {
+  corsConfig = {
+    origin: '*',
+  }
 }
+else {
+  corsConfig = {
+    //origin: '*',
+    origin: 'https://www.re-treat.app',
+  }
+}
+
+
 
 app.use(cors(corsConfig));
 app.use(bodyParser.json());
