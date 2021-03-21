@@ -3,6 +3,7 @@ const { matchExercise } = require("./matching.js");
 const storySharing = require('./storySharing');
 const usernameUtil = require('./anonUsername.js');
 const express = require('express');
+const cors = require('cors');
 const bodyParser = require('body-parser');
 
 const app = express();
