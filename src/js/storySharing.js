@@ -30,7 +30,7 @@ serializeStory= (ele) => {
 getStoryById = (storyId)=>{
     const storyRef = db.collection('story').doc(String(storyId));
     return storyRef.get().then(doc=>{
-        return doc.exists?{success:true,data:doc.data()}:Promise.reject("Invalid Story Id")
+        return doc.exists?{success:true,data: serializeStory(doc.data())}:Promise.reject("Invalid Story Id")
     }).catch((err) => {
         console.log(err);
         return Promise.resolve({success: false,msg:err})
