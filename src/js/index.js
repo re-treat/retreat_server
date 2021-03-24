@@ -9,18 +9,15 @@ const bodyParser = require('body-parser');
 const app = express();
 
 var corsConfig;
+console.log(process.env.CORS);
+
 if (process.env.CORS) {
-  corsConfig = {
-    origin: '*',
-  }
+  corsConfig = { origin: 'https://www.re-treat.app', }
 }
 else {
-  corsConfig = {
-    //origin: '*',
-    origin: 'https://www.re-treat.app',
-  }
+  corsConfig = { origin: '*', }
 }
-
+const PORT = process.env.PORT || 8081;
 
 
 app.use(cors(corsConfig));
@@ -174,8 +171,20 @@ app.post('/username/unregister', async(req, res) => {
   });
 });
 
+app.post('/username/add', async(req, res) => {
+  const name = req.body.name;
+  const promise = usernameUtil.addUsername(name);
+  promise.then(function(result) {
+    res.status(200);
+    res.send(result);
+  }).catch(function(err){
+    console.log(err);
+    res.statusMessage = err;
+    res.status(500);
+    res.send();
+  });
+});
 
-const PORT = process.env.PORT || 8081;
 app.listen(PORT, () => {
   console.log(`Server listening on port ${PORT}...`);
 });
