@@ -69,6 +69,7 @@ deleteStoryById = (storyId) => {
     })
 };
 
+
 queryStory = async (emotion) => {
     console.log("Querying emotion: " + emotion);
     let storyRef = db.collection('story')
@@ -87,6 +88,8 @@ queryStory = async (emotion) => {
                     (ele)=> Object.keys(ele).length>0
                 ).map(
                     serializeStory
+                ).sort(
+                    (a, b) => -(a.timestamp-b.timestamp)
                 )
             }
         }
