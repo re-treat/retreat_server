@@ -5,6 +5,7 @@ const usernameUtil = require('./anonUsername.js');
 const express = require('express');
 const cors = require('cors');
 const bodyParser = require('body-parser');
+const comment = require('./comment.js')
 
 const app = express();
 
@@ -184,6 +185,22 @@ app.post('/username/add', async(req, res) => {
     res.send();
   });
 });
+
+
+app.post('comment/add', async(req, res) => {
+  const {body, timestamp, userName, storyId, isCounselor} = req.body;
+  if (body && timestamp && userName && storyId) {
+    const result = await comment.createComment(body, timestamp, userName, storyId, isCounselor)
+    if (result.success) {
+      res.status(200)
+      res.send(result)
+      return
+    }
+  }
+  res.status(400)
+  res.send("Bad Request")
+});
+
 
 app.listen(PORT, () => {
   console.log(`Server listening on port ${PORT}...`);
